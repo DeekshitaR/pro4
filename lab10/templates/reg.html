@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enroll Student</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <form method="post" action="">
+        {% csrf_token %}
+        <label for="sname">Student Name</label>
+        <select name="sname" id="sname">
+            {% for student in students %}
+                <option value="{{ student.id }}">{{ student.student_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="cname">Course Name</label>
+        <select name="cname" id="cname">
+            {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.course_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <span id="ans"></span>
+        <input type="button" value="Enroll" id="ebtn">
+    </form>
+    <script>
+        $(document).ready(function(){
+            $("#ebtn").click(function(){
+                var sname = $("#sname").val();
+                var cname = $("#cname").val();
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'register' %}",
+                    data: {
+                        sname: sname,
+                        cname: cname,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response){
+                        $("#ans").html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        $("#ans").html("<h1>An error occurred: " + xhr.status + " " + xhr.statusText + "</h1>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
